@@ -1,4 +1,4 @@
-ame: "MR pipeline for 'main'"
+name: "MR pipeline for 'main'"
 run-name: ${{ github.actor }} created MR
 
 on:
