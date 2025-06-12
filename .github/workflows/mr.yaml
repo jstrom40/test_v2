@@ -20,6 +20,7 @@ jobs:
           with:
             ref: main
             token: ${{ secrets.GITHUB_TOKEN }}
+            fetch-depth: 0
 
         - name: Fetch all branches (including stg)
           run: git fetch origin stg
@@ -36,6 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     if: ${{ github.event.pull_request.merged == true }}
+    needs: stg
 
     steps:
       - name: Checkout Branch
@@ -43,6 +45,7 @@ jobs:
         with:
           ref: stg
           token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
       
       - name: Fetch all branches (including prod)
         run: git fetch origin prod
