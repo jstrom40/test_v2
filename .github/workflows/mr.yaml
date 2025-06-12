@@ -27,10 +27,8 @@ jobs:
         - name: Deploy to Staging
           run: |
             echo "Deploying to staging environment..."
-            echo "Step 1: Rebase Staging Branch with Main"
             git checkout stg
             git merge main
-            echo "Step 2: Push Staging Branch"
             git push
             echo "Deployment to staging completed successfully."
   
@@ -38,16 +36,21 @@ jobs:
     runs-on: ubuntu-latest
     environment: prod
     if: ${{ github.event.pull_request.merged == true }}
-    needs: stg
 
     steps:
-        - uses: actions/checkout@v3
-        - run: |
-            echo "Deploying to production environment..."
-            git checkout stg
-            git pull
-            git checkout prod
-            git pull
-            git rebase stg
-            git push origin prod --force
-            echo "Deployment to production completed successfully."
+      - name: Checkout Branch
+        uses: actions/checkout@v3
+        with:
+          ref: stg
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Fetch all branches (including prod)
+        run: git fetch origin prod
+      
+      - name: Deploy to Production
+        run: |
+          echo "Deploying to production environment..."
+          git checkout prod
+          git merge stg
+          git push
+          echo "Deployment to production completed successfully."
